@@ -1,5 +1,5 @@
 const express = require("express");
-const modules = require("./routes/modules");
+const modules = require("./routes/modulesAdmin");
 const home = require("./routes/home");
 const logger = require("./middleware/logger");
 const authenticator = require("./middleware/authenticator");
