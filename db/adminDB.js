@@ -3,10 +3,24 @@ const pool = require("./index");
 
 let stpdbAdmin = {};
 
-stpdbAdmin.all = () => {
+stpdbAdmin.modulesAll = () => {
   return new Promise((resolve, reject) => {
     pool.query(
       "SELECT Name, URL, HasPrerequisite FROM module",
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+stpdbAdmin.studyprogrammeNames = () => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT idStudyProgramme,Name FROM studyprogramme",
       (err, results) => {
         if (err) {
           return reject(err);

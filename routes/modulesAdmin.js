@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    let results = await adminDB.all();
+    let results = await adminDB.modulesAll();
     console.log("alles ok");
     res.json(results);
   } catch (error) {
@@ -13,8 +13,6 @@ router.get("/", async (req, res, next) => {
     res.status(error.response.status);
     return res.send(error.message);
   }
-
-  // res.json({ test: "test" });
 });
 
 router.get("/:id", (req, res) => {

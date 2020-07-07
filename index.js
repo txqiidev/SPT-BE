@@ -1,5 +1,6 @@
 const express = require("express");
 const modulesAdmin = require("./routes/modulesAdmin");
+const studyprogramme = require("./routes/studyprogramme");
 const home = require("./routes/home");
 const logger = require("./middleware/logger");
 const authenticator = require("./middleware/authenticator");
@@ -18,6 +19,7 @@ app.use(authenticator);
 app.use(helmet());
 app.use(morgan("tiny"));
 app.use("/api/admin/modules", modulesAdmin);
+app.use("/api/admin/studyprogramme", studyprogramme);
 app.use("/", home);
 
 app.listen(process.env.PORT || "3000", () =>
