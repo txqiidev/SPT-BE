@@ -44,6 +44,50 @@ router.put("/URL", async (req, res) => {
   }
 });
 
+router.put("/HasPrerequisite", async (req, res) => {
+  const schema = {
+    id: Joi.string().required(),
+    hasPrerequisite: Joi.required(),
+  };
+  const result = Joi.validate(req.body, schema);
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+  try {
+    let results = await adminDB.moduleUpdateHasPrerequisite(
+      req.body.id,
+      req.body.hasPrerequisite
+    );
+    res.json(results);
+  } catch (error) {
+    res.status(error.response.status);
+    return res.send(error.message);
+  }
+});
+
+router.post("/Prerequisite", async (req, res) => {
+  const schema = {
+    id: Joi.string().required(),
+    idPrerequisite: Joi.string().required(),
+  };
+  const result = Joi.validate(req.body, schema);
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+  try {
+    let results = await adminDB.moduleAddPrerequisite(
+      req.body.id,
+      req.body.idPrerequisite
+    );
+    res.json(results);
+  } catch (error) {
+    res.status(error.response.status);
+    return res.send(error.message);
+  }
+});
+
 router.delete("/:id", (req, res) => {
   // Look up the course
   // if not exisiting, return 404
