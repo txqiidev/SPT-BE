@@ -29,7 +29,7 @@ router.put("/URL", [auth, admin], async (req, res) => {
 });
 
 router.put("/HasPrerequisite", [auth, admin], async (req, res) => {
-  const { error } = validate.validateURL(req.body);
+  const { error } = validate.validateHasPrerequisite(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   try {
     let results = await adminDB.moduleUpdateHasPrerequisite(

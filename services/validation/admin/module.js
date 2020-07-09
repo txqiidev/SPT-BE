@@ -8,7 +8,7 @@ function validateURL(module) {
   return Joi.validate(module, schema);
 }
 
-function validateHasPrerequisite(module) {
+function validatePrerequisite(module) {
   const schema = {
     id: Joi.string().required(),
     idPrerequisite: Joi.string().required(),
@@ -16,7 +16,7 @@ function validateHasPrerequisite(module) {
   return Joi.validate(module, schema);
 }
 
-function validatePrerequisite(module) {
+function validateHasPrerequisite(module) {
   const schema = {
     id: Joi.string().required(),
     hasPrerequisite: Joi.required(),
