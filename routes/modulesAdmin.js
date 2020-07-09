@@ -1,6 +1,8 @@
 const express = require("express");
-const Joi = require("joi");
 const adminDB = require("../db/adminDB");
+const { validate } = require("../services/validation/admin/module");
+const auth = require("../middleware/authenticator");
+const admin = require("../middleware/admin");
 
 const router = express.Router();
 
@@ -14,27 +16,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
-  //const course = course.find(c => c.id == parseInt(req.params.id))
-  //if (!course) return res.status(404).send(`Module ${req.params.id} not found`)
-  res.send(req.params.id);
-});
-
-router.post("/", (req, res) => {
-  // req.body.name
-  res.send(req.body.name);
-});
-
-router.put("/URL", async (req, res) => {
-  const schema = {
-    id: Joi.string().required(),
-    url: Joi.string().uri().required(),
-  };
-  const result = Joi.validate(req.body, schema);
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
+router.put("/URL", [auth, admin], async (req, res) => {
+  const { error } = validate.validateURL(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
   try {
     let results = await adminDB.moduleUpdateURL(req.body.id, req.body.url);
     res.json(results);
@@ -44,16 +28,9 @@ router.put("/URL", async (req, res) => {
   }
 });
 
-router.put("/HasPrerequisite", async (req, res) => {
-  const schema = {
-    id: Joi.string().required(),
-    hasPrerequisite: Joi.required(),
-  };
-  const result = Joi.validate(req.body, schema);
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
+router.put("/HasPrerequisite", [auth, admin], async (req, res) => {
+  const { error } = validate.validateURL(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
   try {
     let results = await adminDB.moduleUpdateHasPrerequisite(
       req.body.id,
@@ -66,16 +43,9 @@ router.put("/HasPrerequisite", async (req, res) => {
   }
 });
 
-router.post("/Prerequisite", async (req, res) => {
-  const schema = {
-    id: Joi.string().required(),
-    idPrerequisite: Joi.string().required(),
-  };
-  const result = Joi.validate(req.body, schema);
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
+router.post("/Prerequisite", [auth, admin], async (req, res) => {
+  const { error } = validate.validatePrerequisite(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
   try {
     let results = await adminDB.moduleAddPrerequisite(
       req.body.id,
@@ -86,13 +56,6 @@ router.post("/Prerequisite", async (req, res) => {
     res.status(error.response.status);
     return res.send(error.message);
   }
-});
-
-router.delete("/:id", (req, res) => {
-  // Look up the course
-  // if not exisiting, return 404
-  // Delete
-  // Return the same cours
 });
 
 module.exports = router;
