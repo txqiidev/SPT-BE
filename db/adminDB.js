@@ -17,16 +17,31 @@ stpdbAdmin.modulesAll = () => {
   });
 };
 
-stpdbAdmin.moduleOne = (id) => {
+stpdbAdmin.prerequisiteModules = (id) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT URL FROM module where idModule = ?",
+      "SELECT p.Module_idModule_Prerequisite as idModule, m.Name FROM prerequisite_module as p JOIN module as m on p.Module_idModule_Prerequisite = m.idModule WHERE p.Module_idModule = ?",
       id,
       (err, results) => {
         if (err) {
           return reject(err);
         }
         return resolve(results);
+      }
+    );
+  });
+};
+
+stpdbAdmin.moduleOne = (id) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT idModule, Name, URL, HasPrerequisite FROM module where idModule = ?",
+      id,
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results[0]);
       }
     );
   });
@@ -66,6 +81,21 @@ stpdbAdmin.moduleAddPrerequisite = (id, idPrerequisite) => {
   return new Promise((resolve, reject) => {
     pool.query(
       "INSERT INTO prerequisite_module (Module_idModule, Module_idModule_Prerequisite) VALUES (?, ?)",
+      [id, idPrerequisite],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+stpdbAdmin.deletePrerequisite = (id, idPrerequisite) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "DELETE FROM prerequisite_module WHERE Module_idModule = ? AND Module_idModule_Prerequisite = ?",
       [id, idPrerequisite],
       (err, results) => {
         if (err) {
