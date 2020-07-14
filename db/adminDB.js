@@ -121,4 +121,18 @@ stpdbAdmin.studyprogrammeNames = () => {
   });
 };
 
+stpdbAdmin.locations = () => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT l.idLocation, c.ZIP, c.Name FROM Location as l JOIN City as c on l.City_ZIP = c.ZIP",
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
 module.exports = stpdbAdmin;
