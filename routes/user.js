@@ -11,8 +11,6 @@ const router = express.Router();
 
 router.get("/me", auth, async (req, res) => {
   try {
-    console.log("this shit:", req.user);
-
     let user = await userDB.findUser(req.user);
     res.json(user);
   } catch (error) {
@@ -39,7 +37,23 @@ router.post("/registration", async (req, res) => {
           },
           process.env.PK
         );
-        res.header("x-auth-token", token).send(results);
+        if (req.body.isAdmin === 1)
+          return res
+            .header("x-auth-token", token)
+            .header("access-control-expose-headers", "x-auth-token")
+            .send(token);
+        if (req.body.isAdmin === 0) {
+          try {
+            let resultsStudent = await userDB.addStudent(req.body);
+            return res
+              .header("x-auth-token", token)
+              .header("access-control-expose-headers", "x-auth-token")
+              .send(token);
+          } catch (error) {
+            res.status(error.response.status);
+            return res.send(error.message);
+          }
+        }
       } catch (error) {
         res.status(error.response.status);
         return res.send(error.message);

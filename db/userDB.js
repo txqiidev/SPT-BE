@@ -34,4 +34,19 @@ stpdbUser.addUser = (user) => {
   });
 };
 
+stpdbUser.addStudent = (user) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "INSERT INTO Student (User_email, Year, StudyProgramme_idStudyProgramme) VALUES (?, ?, ?)",
+      [user.email, user.year, user.studyprogramme],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(user);
+      }
+    );
+  });
+};
+
 module.exports = stpdbUser;

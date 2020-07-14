@@ -1,6 +1,7 @@
 const express = require("express");
 const modulesAdmin = require("./routes/modulesAdmin");
 const studyprogramme = require("./routes/studyprogramme");
+const student = require("./routes/student");
 const user = require("./routes/user");
 const auth = require("./routes/auth");
 const home = require("./routes/home");
@@ -20,7 +21,8 @@ app.use(logger);
 app.use(helmet());
 app.use(morgan("tiny"));
 app.use("/api/admin/modules", modulesAdmin);
-app.use("/api/admin/studyprogramme", studyprogramme);
+app.use("/api/student", student);
+app.use("/api/studyprogramme", studyprogramme);
 app.use("/api/user", user);
 app.use("/api/auth", auth);
 app.use("/", home);
