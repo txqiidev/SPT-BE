@@ -14,7 +14,7 @@ stpdbStudent.modulesAll = async (id) => {
         }
         var resultModule = results;
         pool.query(
-          "SELECT p.Module_idModule, p.Module_idModule_Prerequisite FROM Prerequisite_Module as p JOIN module as m on p.Module_idModule = m.idModule WHERE m.StudyProgramme_idStudyProgramme = ?",
+          "SELECT p.Module_idModule, p.Module_idModule_Prerequisite, m.Name FROM Prerequisite_Module as p JOIN module as m on p.Module_idModule = m.idModule WHERE m.StudyProgramme_idStudyProgramme = ?",
           id,
           (err, results) => {
             if (err) {
@@ -25,7 +25,7 @@ stpdbStudent.modulesAll = async (id) => {
             resultModule.forEach((rm) => {
               rm["prerequisiteModule"] = resultPreModules
                 .filter((rpm) => rpm.Module_idModule === rm.idModule)
-                .map((pm) => pm.Module_idModule_Prerequisite);
+                .map(({ Module_idModule, ...keepAttrs }) => keepAttrs);
             });
 
             pool.query(
