@@ -85,4 +85,55 @@ stpdbStudent.moduleGroups = async (id) => {
   });
 };
 
+stpdbStudent.plan = async (email) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT Semester_idSemester, Module_idModule FROM Plan WHERE Student_User_email = ?",
+      email,
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(
+          results.reduce((r, a) => {
+            r[a.Semester_idSemester] = r[a.Semester_idSemester] || [];
+            r[a.Semester_idSemester].push(a);
+            return r;
+          }, Object.create(null))
+        );
+      }
+    );
+  });
+};
+
+stpdbStudent.addToPlan = (email, idSemester, idModule) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "INSERT INTO Plan (Student_User_email, Semester_idSemester, Module_idModule) VALUES (?, ?, ?)",
+      [email, idSemester, idModule],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+stpdbStudent.deleteFromPlan = (email, idSemester, idModule) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "DELETE FROM Plan WHERE Student_User_email = ? AND Semester_idSemester = ? AND Module_idModule = ?",
+      [email, idSemester, idModule],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
 module.exports = stpdbStudent;
