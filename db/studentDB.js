@@ -136,4 +136,59 @@ stpdbStudent.deleteFromPlan = (email, idSemester, idModule) => {
   });
 };
 
+stpdbStudent.semester = async (email) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT Semester_idSemester FROM Student_has_Semester WHERE Student_User_email = ?",
+      email,
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+stpdbStudent.addSemester = (email, idSemester) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "INSERT INTO Student_has_Semester (Student_User_email, Semester_idSemester) VALUES (?, ?)",
+      [email, idSemester],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+stpdbStudent.deleteSemester = (email, idSemester) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "DELETE FROM Student_has_Semester WHERE Student_User_email = ? AND Semester_idSemester = ?",
+      [email, idSemester],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+
+        pool.query(
+          "DELETE FROM Plan WHERE Student_User_email = ? AND Semester_idSemester = ?",
+          [email, idSemester],
+          (err, results) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve(results);
+          }
+        );
+      }
+    );
+  });
+};
+
 module.exports = stpdbStudent;
