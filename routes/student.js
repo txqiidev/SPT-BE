@@ -134,4 +134,18 @@ router.delete("/deleteSemester", [auth], async (req, res) => {
   }
 });
 
+router.put("/hasPassed", [auth], async (req, res) => {
+  try {
+    let results = await studentDB.hasPassed(
+      req.body.email,
+      req.body.idModule,
+      req.body.hasPassed
+    );
+    res.json(results);
+  } catch (error) {
+    res.status(error.response.status);
+    return res.send(error.message);
+  }
+});
+
 module.exports = router;

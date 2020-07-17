@@ -110,7 +110,7 @@ stpdbAdmin.deletePrerequisite = (id, idPrerequisite) => {
 stpdbAdmin.studyprogrammeNames = () => {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT idStudyProgramme,Name FROM studyprogramme",
+      "SELECT idStudyProgramme,Name, Credits FROM studyprogramme",
       (err, results) => {
         if (err) {
           return reject(err);

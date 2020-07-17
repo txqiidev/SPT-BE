@@ -14,7 +14,7 @@ stpdbStudent.modulesAll = async (id) => {
         }
         var resultModule = results;
         pool.query(
-          "SELECT p.Module_idModule, p.Module_idModule_Prerequisite, m.Name FROM Prerequisite_Module as p JOIN module as m on p.Module_idModule = m.idModule WHERE m.StudyProgramme_idStudyProgramme = ?",
+          "SELECT p.Module_idModule, p.Module_idModule_Prerequisite, m.Name FROM Prerequisite_Module as p JOIN module as m on p.Module_idModule_Prerequisite = m.idModule WHERE m.StudyProgramme_idStudyProgramme = ?",
           id,
           (err, results) => {
             if (err) {
@@ -88,7 +88,7 @@ stpdbStudent.moduleGroups = async (id) => {
 stpdbStudent.plan = async (email) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      "SELECT Semester_idSemester, Module_idModule FROM Plan WHERE Student_User_email = ?",
+      "SELECT Semester_idSemester, Module_idModule, hasPassed FROM Plan WHERE Student_User_email = ?",
       email,
       (err, results) => {
         if (err) {
@@ -186,6 +186,21 @@ stpdbStudent.deleteSemester = (email, idSemester) => {
             return resolve(results);
           }
         );
+      }
+    );
+  });
+};
+
+stpdbStudent.hasPassed = (email, id, hasPassed) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "UPDATE Plan SET hasPassed = ? where Student_User_email = ? AND Module_idModule = ?",
+      [hasPassed, email, id],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
       }
     );
   });
