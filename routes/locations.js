@@ -1,16 +1,15 @@
 const express = require("express");
-const adminDB = require("../db/adminDB");
+const stpdbGeneral = require("../db/generalDB");
+const asyncMiddleware = require("../middleware/async");
 
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
-  try {
-    let results = await adminDB.locations();
+router.get(
+  "/",
+  asyncMiddleware(async (req, res) => {
+    let results = await stpdbGeneral.locations();
     res.json(results);
-  } catch (error) {
-    res.status(error.response.status);
-    return res.send(error.message);
-  }
-});
+  })
+);
 
 module.exports = router;

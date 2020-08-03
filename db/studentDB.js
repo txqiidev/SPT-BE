@@ -9,17 +9,15 @@ stpdbStudent.modulesAll = async (id) => {
       "SELECT * FROM Module WHERE StudyProgramme_idStudyProgramme = ?",
       id,
       (err, results) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
+
         var resultModule = results;
         pool.query(
           "SELECT p.Module_idModule, p.Module_idModule_Prerequisite, m.Name FROM Prerequisite_Module as p JOIN module as m on p.Module_idModule_Prerequisite = m.idModule WHERE m.StudyProgramme_idStudyProgramme = ?",
           id,
           (err, results) => {
-            if (err) {
-              return reject(err);
-            }
+            if (err) return reject(err);
+
             const resultPreModules = results;
 
             resultModule.forEach((rm) => {
@@ -32,9 +30,8 @@ stpdbStudent.modulesAll = async (id) => {
               "SELECT p.Module_idModule, p.Semester_idSemester, p.Mode FROM Module_has_ProposedSemester as p JOIN module as m on p.Module_idModule = m.idModule WHERE m.StudyProgramme_idStudyProgramme = ?",
               id,
               (err, results) => {
-                if (err) {
-                  return reject(err);
-                }
+                if (err) return reject(err);
+
                 const resultProposedSemester = results;
 
                 resultModule.forEach((rm) => {
@@ -47,9 +44,8 @@ stpdbStudent.modulesAll = async (id) => {
                   "SELECT m.Module_idModule as idModule, m.ExamType_idExamType as idExamType, m.Number, m.DurationInMin, m.Weight, m.Evaluation, e.Type FROM Module_has_Exam as m JOIN ExamType as e on m.ExamType_idExamType = e.idExamType JOIN module as mo on m.Module_idModule = mo.idModule WHERE mo.StudyProgramme_idStudyProgramme = ?",
                   id,
                   (err, results) => {
-                    if (err) {
-                      return reject(err);
-                    }
+                    if (err) return reject(err);
+
                     const resultExams = results;
 
                     resultModule.forEach((rm) => {
@@ -75,12 +71,7 @@ stpdbStudent.moduleGroups = async (id) => {
     pool.query(
       "SELECT * FROM ModuleGroup WHERE StudyProgramme_idStudyProgramme = ?",
       id,
-      (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(results);
-      }
+      (err, results) => (err ? reject(err) : resolve(results))
     );
   });
 };
@@ -91,9 +82,8 @@ stpdbStudent.plan = async (email) => {
       "SELECT Semester_idSemester, Module_idModule, hasPassed FROM Plan WHERE Student_User_email = ?",
       email,
       (err, results) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
+
         return resolve(
           results.reduce((r, a) => {
             r[a.Semester_idSemester] = r[a.Semester_idSemester] || [];
@@ -111,12 +101,7 @@ stpdbStudent.addToPlan = (email, idSemester, idModule) => {
     pool.query(
       "INSERT INTO Plan (Student_User_email, Semester_idSemester, Module_idModule) VALUES (?, ?, ?)",
       [email, idSemester, idModule],
-      (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(results);
-      }
+      (err, results) => (err ? reject(err) : resolve(results))
     );
   });
 };
@@ -126,12 +111,7 @@ stpdbStudent.deleteFromPlan = (email, idSemester, idModule) => {
     pool.query(
       "DELETE FROM Plan WHERE Student_User_email = ? AND Semester_idSemester = ? AND Module_idModule = ?",
       [email, idSemester, idModule],
-      (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(results);
-      }
+      (err, results) => (err ? reject(err) : resolve(results))
     );
   });
 };
@@ -141,12 +121,7 @@ stpdbStudent.semester = async (email) => {
     pool.query(
       "SELECT Semester_idSemester FROM Student_has_Semester WHERE Student_User_email = ?",
       email,
-      (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(results);
-      }
+      (err, results) => (err ? reject(err) : resolve(results))
     );
   });
 };
@@ -156,12 +131,7 @@ stpdbStudent.addSemester = (email, idSemester) => {
     pool.query(
       "INSERT INTO Student_has_Semester (Student_User_email, Semester_idSemester) VALUES (?, ?)",
       [email, idSemester],
-      (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(results);
-      }
+      (err, results) => (err ? reject(err) : resolve(results))
     );
   });
 };
@@ -172,9 +142,7 @@ stpdbStudent.deleteSemester = (email, idSemester) => {
       "DELETE FROM Student_has_Semester WHERE Student_User_email = ? AND Semester_idSemester = ?",
       [email, idSemester],
       (err, results) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
 
         pool.query(
           "DELETE FROM Plan WHERE Student_User_email = ? AND Semester_idSemester = ?",
@@ -196,12 +164,7 @@ stpdbStudent.hasPassed = (email, id, hasPassed) => {
     pool.query(
       "UPDATE Plan SET hasPassed = ? where Student_User_email = ? AND Module_idModule = ?",
       [hasPassed, email, id],
-      (err, results) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(results);
-      }
+      (err, results) => (err ? reject(err) : resolve(results))
     );
   });
 };

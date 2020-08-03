@@ -1,141 +1,78 @@
-const mysql = require('mysql')
-const pool = require('./index')
+const mysql = require("mysql");
+const pool = require("./index");
 
-let stpdbAdmin = {}
+let stpdbAdmin = {};
 
-stpdbAdmin.modulesAll = id => {
+stpdbAdmin.modulesAll = (id) => {
   return new Promise((resolve, reject) => {
     pool.query(
       `SELECT idModule, Name, URL, HasPrerequisite FROM module ${
-        id !== 'All' ? 'WHERE StudyProgramme_idStudyProgramme = ?' : ''
+        id !== "All" ? "WHERE StudyProgramme_idStudyProgramme = ?" : ""
       }`,
       id,
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results))
+    );
+  });
+};
 
-stpdbAdmin.prerequisiteModules = id => {
+stpdbAdmin.prerequisiteModules = (id) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'SELECT p.Module_idModule_Prerequisite as idModule, m.Name FROM prerequisite_module as p JOIN module as m on p.Module_idModule_Prerequisite = m.idModule WHERE p.Module_idModule = ?',
+      "SELECT p.Module_idModule_Prerequisite as idModule, m.Name FROM prerequisite_module as p JOIN module as m on p.Module_idModule_Prerequisite = m.idModule WHERE p.Module_idModule = ?",
       id,
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results))
+    );
+  });
+};
 
-stpdbAdmin.moduleOne = id => {
+stpdbAdmin.moduleOne = (id) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'SELECT idModule, Name, URL, HasPrerequisite FROM module where idModule = ?',
+      "SELECT idModule, Name, URL, HasPrerequisite FROM module where idModule = ?",
       id,
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results[0])
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results[0]))
+    );
+  });
+};
 
 stpdbAdmin.moduleUpdateURL = (id, url) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'UPDATE module SET URL=? where idModule = ?',
+      "UPDATE module SET URL=? where idModule = ?",
       [url, id],
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results))
+    );
+  });
+};
 
 stpdbAdmin.moduleUpdateHasPrerequisite = (id, hasPrerequisite) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'UPDATE module SET HasPrerequisite = ? where idModule = ?',
+      "UPDATE module SET HasPrerequisite = ? where idModule = ?",
       [hasPrerequisite, id],
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results))
+    );
+  });
+};
 
 stpdbAdmin.moduleAddPrerequisite = (id, idPrerequisite) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'INSERT INTO prerequisite_module (Module_idModule, Module_idModule_Prerequisite) VALUES (?, ?)',
+      "INSERT INTO prerequisite_module (Module_idModule, Module_idModule_Prerequisite) VALUES (?, ?)",
       [id, idPrerequisite],
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results))
+    );
+  });
+};
 
 stpdbAdmin.deletePrerequisite = (id, idPrerequisite) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'DELETE FROM prerequisite_module WHERE Module_idModule = ? AND Module_idModule_Prerequisite = ?',
+      "DELETE FROM prerequisite_module WHERE Module_idModule = ? AND Module_idModule_Prerequisite = ?",
       [id, idPrerequisite],
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
+      (err, results) => (err ? reject(err) : resolve(results))
+    );
+  });
+};
 
-stpdbAdmin.studyprogrammeNames = () => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-      'SELECT idStudyProgramme,Name, Credits FROM studyprogramme',
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
-
-stpdbAdmin.locations = () => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-      'SELECT l.idLocation, c.ZIP, c.Name FROM Location as l JOIN City as c on l.City_ZIP = c.ZIP',
-      (err, results) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
-
-module.exports = stpdbAdmin
+module.exports = stpdbAdmin;
