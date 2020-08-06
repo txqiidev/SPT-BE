@@ -1,4 +1,4 @@
-module.exports = function asyncMiddleware(handler) {
+module.exports = asyncMiddleware = (handler) => {
   return async (req, res) => {
     try {
       await handler(req, res);
