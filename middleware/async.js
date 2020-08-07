@@ -1,10 +1,9 @@
 module.exports = asyncMiddleware = (handler) => {
-  return async (req, res) => {
+  return async (req, res, next) => {
     try {
       await handler(req, res);
     } catch (error) {
-      res.status(error.response.status);
-      return res.send(error.message);
+      next(error);
     }
   };
 };
