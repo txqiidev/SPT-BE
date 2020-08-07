@@ -3,6 +3,8 @@ const pool = require("./index");
 
 let stpdbStudent = {};
 
+// To retrieve the corresponding module objects, several queries are performed and the results are compiled individually
+// Can be seen as a manually conducted ORM
 stpdbStudent.modulesAll = async (id) => {
   return new Promise((resolve, reject) => {
     pool.query(
@@ -20,6 +22,7 @@ stpdbStudent.modulesAll = async (id) => {
 
             const resultPreModules = results;
 
+            // creates a variable that is an array of the prerequisite modules of the module
             resultModule.forEach((rm) => {
               rm["prerequisiteModule"] = resultPreModules
                 .filter((rpm) => rpm.Module_idModule === rm.idModule)
@@ -34,6 +37,7 @@ stpdbStudent.modulesAll = async (id) => {
 
                 const resultProposedSemester = results;
 
+                // creates a variable, including the proposed semester for fulltime and parttime
                 resultModule.forEach((rm) => {
                   rm["proposedSemester"] = resultProposedSemester
                     .filter((rps) => rps.Module_idModule === rm.idModule)
@@ -48,6 +52,7 @@ stpdbStudent.modulesAll = async (id) => {
 
                     const resultExams = results;
 
+                    // creates a variable, that is an array of the exams of the module
                     resultModule.forEach((rm) => {
                       rm["exams"] = resultExams
                         .filter((re) => re.idModule === rm.idModule)
@@ -85,6 +90,7 @@ stpdbStudent.plan = async (email) => {
         if (err) return reject(err);
 
         return resolve(
+          // categorizes modules into corresponding semester
           results.reduce((r, a) => {
             r[a.Semester_idSemester] = r[a.Semester_idSemester] || [];
             r[a.Semester_idSemester].push(a);
